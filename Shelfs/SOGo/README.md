@@ -1,0 +1,1 @@
+Docker Compose for <https://www.sogo.nu> utilizing <https://hub.docker.com/r/mailcow/sogo>
