@@ -3,7 +3,8 @@ docker-compose.override.yml
 docker-compose.*.yml
 
 # Ignore environment variable files
-.env
+*/.env
+*/local.env
 
 # Ignore Docker volumes and logs
 volumes/
