@@ -29,6 +29,8 @@ services:
       YOURLS_DB_PASS: ${DATABASE_PASSWORD:?DATABASE_PASSWORD environment variable is required}
       YOURLS_DB_NAME: ${DATABASE_NAME:-yourls}
       YOURLS_DB_PREFIX: ${DATABASE_PREFIX:-yourls_}
+      YOURLS_UNIQUE_URLS: ${YOURLS_UNIQUE_URLS:-true}
+      YOURLS_PRIVATE: ${YOURLS_PRIVATE:-true}
     volumes:
       - yourls_data:/var/www/html
     depends_on:
