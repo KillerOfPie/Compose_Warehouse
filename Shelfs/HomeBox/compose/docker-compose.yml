@@ -1,0 +1,54 @@
+services:name: pie-homebox
+
+services:
+
+  # Net Services
+  tunnel:
+    container_name: ${COMPOSE_PROJECT_NAME}_cloudflared-tunnel
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - homebox
+    profiles: [cloudflared]
+    networks:
+      - exit
+      - internal
+      
+  # Main Services
+  homebox:
+    container_name: ${COMPOSE_PROJECT_NAME}_homebox
+    image: ghcr.io/sysadminsmedia/homebox:latest
+    restart: unless-stopped
+    environment:
+    - HBOX_LOG_LEVEL=info
+    - HBOX_LOG_FORMAT=text
+    - HBOX_WEB_MAX_UPLOAD_SIZE=100
+    - HBOX_MAILER_HOST=${mail__options__host:-}
+    - HBOX_MAILER_PORT=${mail__options__port:-}
+    - HBOX_MAILER_USERNAME=${mail__options__auth__user:-}
+    - HBOX_MAILER_PASSWORD=${mail__options__auth__pass:-}
+    - HBOX_MAILER_FROM=${mail__options__auth__user:-}
+    - HBOX_BARCODE_TOKEN_BARCODESPIDER=${BARCODE_SPIDER_TOKEN:-}
+    # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
+    - HBOX_OPTIONS_ALLOW_ANALYTICS=false
+    volumes:
+      - homebox-data:/data/
+
+volumes:
+  homebox_data:
+    name: ${COMPOSE_PROJECT_NAME}_HOMEBOX_DATA_VOL
+    labels:
+      com.example.description: "(${COMPOSE_PROJECT_NAME}) HomeBox Data volume"
+
+networks:
+  exit:
+    name: ${COMPOSE_PROJECT_NAME}_EXIT_NET
+    attachable: false
+    driver: bridge
+  internal:
+    name: ${COMPOSE_PROJECT_NAME}_INTERNAL_NET
+    attachable: false
+    internal: true
